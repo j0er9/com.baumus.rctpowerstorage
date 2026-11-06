@@ -1,0 +1,69 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Battery Status",
+    "de": "Batterie-Status"
+  },
+  "values": [
+    {
+      "id": "normal",
+      "title": {
+        "en": "Normal operation",
+        "de": "Normalbetrieb"
+      }
+    },
+    {
+      "id": "calibrating_charge",
+      "title": {
+        "en": "Calibrating (Charging)",
+        "de": "Kalibrierung (Ladephase)"
+      }
+    },
+    {
+      "id": "calibrating_discharge",
+      "title": {
+        "en": "Calibrating (Discharging)",
+        "de": "Kalibrierung (Entladephase)"
+      }
+    },
+    {
+      "id": "balancing",
+      "title": {
+        "en": "Balancing battery units",
+        "de": "Balancierung der Batteriemodule"
+      }
+    },
+    {
+      "id": "connecting",
+      "title": {
+        "en": "Connecting",
+        "de": "Verbindungsaufbau"
+      }
+    },
+    {
+      "id": "synchronizing",
+      "title": {
+        "en": "Synchronizing",
+        "de": "Synchronisierung"
+      }
+    },
+    {
+      "id": "idle",
+      "title": {
+        "en": "Idle (No CAN connection)",
+        "de": "Inaktiv (Keine CAN-Verbindung)"
+      }
+    },
+    {
+      "id": "other",
+      "title": {
+        "en": "Other / Special mode",
+        "de": "Sonstiger / Sonderbetrieb"
+      }
+    }
+  ],
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/charging.svg"
+}

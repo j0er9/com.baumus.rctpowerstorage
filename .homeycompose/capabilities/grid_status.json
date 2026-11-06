@@ -1,0 +1,27 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Grid Status",
+    "de": "Netzstatus"
+  },
+  "values": [
+    {
+      "id": "connected",
+      "title": {
+        "en": "Grid Connected",
+        "de": "Mit Stromnetz verbunden"
+      }
+    },
+    {
+      "id": "island",
+      "title": {
+        "en": "Island Mode (Power Outage)",
+        "de": "Inselbetrieb (Stromausfall)"
+      }
+    }
+  ],
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/electric-tower.svg"
+}

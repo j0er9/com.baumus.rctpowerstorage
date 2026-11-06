@@ -42,6 +42,26 @@
       "label": { "en": "Connection" },
       "children": [
         {
+          "id": "DeviceIP",
+          "type": "text",
+          "value": "",
+          "label": {
+            "en": "IP Address",
+            "de": "IP-Adresse"
+          }
+        },
+        {
+          "id": "DevicePort",
+          "type": "number",
+          "value": 8899,
+          "min": 1,
+          "max": 65535,
+          "label": {
+            "en": "Port",
+            "de": "Port"
+          }
+        },
+        {
           "id": "polling_interval",
           "type": "number",
           "label": { "en": "Polling interval (seconds)" },

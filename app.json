@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.baumus.rctpowerstorage",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "compatibility": ">=12.4.5",
   "sdk": 3,
   "platforms": [
@@ -806,6 +806,26 @@
           },
           "children": [
             {
+              "id": "DeviceIP",
+              "type": "text",
+              "value": "",
+              "label": {
+                "en": "IP Address",
+                "de": "IP-Adresse"
+              }
+            },
+            {
+              "id": "DevicePort",
+              "type": "number",
+              "value": 8899,
+              "min": 1,
+              "max": 65535,
+              "label": {
+                "en": "Port",
+                "de": "Port"
+              }
+            },
+            {
               "id": "polling_interval",
               "type": "number",
               "label": {
@@ -833,6 +853,9 @@
         "battery_power",
         "battery_modus",
         "soc_strategy",
+        "battery_status",
+        "grid_status",
+        "inverter_state",
         "solar_power",
         "total_grid_power",
         "load_household"
@@ -1032,18 +1055,22 @@
             },
             {
               "id": "DeviceIP",
-              "type": "label",
+              "type": "text",
               "value": "",
               "label": {
-                "en": "IP Address"
+                "en": "IP Address",
+                "de": "IP-Adresse"
               }
             },
             {
               "id": "DevicePort",
-              "type": "label",
-              "value": "",
+              "type": "number",
+              "value": 8899,
+              "min": 1,
+              "max": 65535,
               "label": {
-                "en": "Port"
+                "en": "Port",
+                "de": "Port"
               }
             },
             {
@@ -1441,6 +1468,26 @@
           },
           "children": [
             {
+              "id": "DeviceIP",
+              "type": "text",
+              "value": "",
+              "label": {
+                "en": "IP Address",
+                "de": "IP-Adresse"
+              }
+            },
+            {
+              "id": "DevicePort",
+              "type": "number",
+              "value": 8899,
+              "min": 1,
+              "max": 65535,
+              "label": {
+                "en": "Port",
+                "de": "Port"
+              }
+            },
+            {
               "id": "polling_interval",
               "type": "number",
               "label": {
@@ -1687,9 +1734,431 @@
             "filter": "driver_id=rct-power-storage-dc"
           }
         ]
+      },
+      {
+        "id": "grid_disconnected",
+        "highlight": true,
+        "title": {
+          "en": "Power outage / Island mode started (Disconnected from grid)",
+          "de": "Stromausfall / Inselbetrieb gestartet (Vom Stromnetz getrennt)"
+        },
+        "titleFormatted": {
+          "en": "Power outage / Island mode started (Disconnected from grid)",
+          "de": "Stromausfall / Inselbetrieb gestartet (Vom Stromnetz getrennt)"
+        },
+        "tokens": [
+          {
+            "name": "inverter_state",
+            "type": "string",
+            "title": {
+              "en": "Inverter State",
+              "de": "Wechselrichter-Status"
+            },
+            "example": "Battery passive"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "grid_reconnected",
+        "title": {
+          "en": "Grid connection restored (Island mode ended)",
+          "de": "Netzverbindung wiederhergestellt (Inselbetrieb beendet)"
+        },
+        "titleFormatted": {
+          "en": "Grid connection restored (Island mode ended)",
+          "de": "Netzverbindung wiederhergestellt (Inselbetrieb beendet)"
+        },
+        "tokens": [
+          {
+            "name": "inverter_state",
+            "type": "string",
+            "title": {
+              "en": "Inverter State",
+              "de": "Wechselrichter-Status"
+            },
+            "example": "Feed in"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "inverter_state_changed",
+        "title": {
+          "en": "Inverter State Changed",
+          "de": "Wechselrichter-Status hat sich geändert"
+        },
+        "titleFormatted": {
+          "en": "Inverter State Changed",
+          "de": "Wechselrichter-Status hat sich geändert"
+        },
+        "tokens": [
+          {
+            "name": "inverter_state",
+            "type": "string",
+            "title": {
+              "en": "Inverter State",
+              "de": "Wechselrichter-Status"
+            },
+            "example": "Feed in"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "battery_calibration_started",
+        "highlight": true,
+        "title": {
+          "en": "Battery calibration started",
+          "de": "Batterie-Kalibrierung gestartet"
+        },
+        "titleFormatted": {
+          "en": "Battery calibration started",
+          "de": "Batterie-Kalibrierung gestartet"
+        },
+        "tokens": [
+          {
+            "name": "battery_status",
+            "type": "string",
+            "title": {
+              "en": "Battery Status",
+              "de": "Batterie-Status"
+            },
+            "example": "Calibrating - charging phase"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "battery_calibration_ended",
+        "title": {
+          "en": "Battery calibration ended",
+          "de": "Batterie-Kalibrierung beendet"
+        },
+        "titleFormatted": {
+          "en": "Battery calibration ended",
+          "de": "Batterie-Kalibrierung beendet"
+        },
+        "tokens": [
+          {
+            "name": "battery_status",
+            "type": "string",
+            "title": {
+              "en": "Battery Status",
+              "de": "Batterie-Status"
+            },
+            "example": "Normal operation (charge/discharge)"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "battery_status_changed",
+        "title": {
+          "en": "Battery Status Changed",
+          "de": "Batterie-Status hat sich geändert"
+        },
+        "titleFormatted": {
+          "en": "Battery Status Changed",
+          "de": "Batterie-Status hat sich geändert"
+        },
+        "tokens": [
+          {
+            "name": "battery_status",
+            "type": "string",
+            "title": {
+              "en": "Battery Status",
+              "de": "Batterie-Status"
+            },
+            "example": "Normal operation (charge/discharge)"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
       }
     ],
     "conditions": [
+      {
+        "id": "is_battery_calibrating",
+        "title": {
+          "en": "Battery !{{is|is not}} in calibration mode",
+          "de": "Batterie !{{ist|ist nicht}} im Kalibrierungsmodus"
+        },
+        "titleFormatted": {
+          "en": "Battery !{{is|is not}} in calibration mode",
+          "de": "Batterie !{{ist|ist nicht}} im Kalibrierungsmodus"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "battery_status_is",
+        "title": {
+          "en": "Battery Status !{{is|is not}}",
+          "de": "Batterie-Status !{{ist|ist nicht}}"
+        },
+        "titleFormatted": {
+          "en": "Battery Status !{{is|is not}} [[battery_status]]",
+          "de": "Batterie-Status !{{ist|ist nicht}} [[battery_status]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          },
+          {
+            "type": "dropdown",
+            "name": "battery_status",
+            "title": {
+              "en": "Battery Status",
+              "de": "Batterie-Status"
+            },
+            "values": [
+              {
+                "id": "normal",
+                "title": {
+                  "en": "Normal operation",
+                  "de": "Normalbetrieb"
+                }
+              },
+              {
+                "id": "calibrating_charge",
+                "title": {
+                  "en": "Calibrating (Charging)",
+                  "de": "Kalibrierung (Ladephase)"
+                }
+              },
+              {
+                "id": "calibrating_discharge",
+                "title": {
+                  "en": "Calibrating (Discharging)",
+                  "de": "Kalibrierung (Entladephase)"
+                }
+              },
+              {
+                "id": "balancing",
+                "title": {
+                  "en": "Balancing battery units",
+                  "de": "Balancierung der Batteriemodule"
+                }
+              },
+              {
+                "id": "connecting",
+                "title": {
+                  "en": "Connecting",
+                  "de": "Verbindungsaufbau"
+                }
+              },
+              {
+                "id": "synchronizing",
+                "title": {
+                  "en": "Synchronizing",
+                  "de": "Synchronisierung"
+                }
+              },
+              {
+                "id": "idle",
+                "title": {
+                  "en": "Idle (No CAN connection)",
+                  "de": "Inaktiv (Keine CAN-Verbindung)"
+                }
+              },
+              {
+                "id": "other",
+                "title": {
+                  "en": "Other / Special mode",
+                  "de": "Sonstiger / Sonderbetrieb"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "is_grid_connected",
+        "title": {
+          "en": "!{{Is|Is not}} connected to the public grid (Not in island mode)",
+          "de": "!{{Ist|Ist nicht}} mit dem öffentlichen Stromnetz verbunden (Kein Inselbetrieb)"
+        },
+        "titleFormatted": {
+          "en": "!{{Is|Is not}} connected to the public grid (Not in island mode)",
+          "de": "!{{Ist|Ist nicht}} mit dem öffentlichen Stromnetz verbunden (Kein Inselbetrieb)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          }
+        ]
+      },
+      {
+        "id": "inverter_state_is",
+        "title": {
+          "en": "Inverter State !{{is|is not}}",
+          "de": "Wechselrichter-Status !{{ist|ist nicht}}"
+        },
+        "titleFormatted": {
+          "en": "Inverter State !{{is|is not}} [[inverter_state]]",
+          "de": "Wechselrichter-Status !{{ist|ist nicht}} [[inverter_state]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=rct-power-storage-dc"
+          },
+          {
+            "type": "dropdown",
+            "name": "inverter_state",
+            "title": {
+              "en": "Inverter State",
+              "de": "Wechselrichter-Status"
+            },
+            "values": [
+              {
+                "id": "Standby",
+                "title": {
+                  "en": "Standby",
+                  "de": "Standby"
+                }
+              },
+              {
+                "id": "Initialization",
+                "title": {
+                  "en": "Initialization",
+                  "de": "Initialisierung"
+                }
+              },
+              {
+                "id": "Standby2",
+                "title": {
+                  "en": "Standby 2",
+                  "de": "Standby 2"
+                }
+              },
+              {
+                "id": "Efficiency",
+                "title": {
+                  "en": "Efficiency",
+                  "de": "Effizienz"
+                }
+              },
+              {
+                "id": "Insulation check",
+                "title": {
+                  "en": "Insulation check",
+                  "de": "Isolationsprüfung"
+                }
+              },
+              {
+                "id": "Island check",
+                "title": {
+                  "en": "Island check",
+                  "de": "Inselprüfung"
+                }
+              },
+              {
+                "id": "Power check",
+                "title": {
+                  "en": "Power check",
+                  "de": "Leistungsprüfung"
+                }
+              },
+              {
+                "id": "Symmetry",
+                "title": {
+                  "en": "Symmetry",
+                  "de": "Symmetrie"
+                }
+              },
+              {
+                "id": "Relay test",
+                "title": {
+                  "en": "Relay test",
+                  "de": "Relaistest"
+                }
+              },
+              {
+                "id": "Grid passive",
+                "title": {
+                  "en": "Grid passive",
+                  "de": "Netz passiv"
+                }
+              },
+              {
+                "id": "Prepare battery passive",
+                "title": {
+                  "en": "Prepare battery passive (Island)",
+                  "de": "Notstrom vorbereiten (Batterie passiv)"
+                }
+              },
+              {
+                "id": "Battery passive",
+                "title": {
+                  "en": "Battery passive (Island / Off-Grid)",
+                  "de": "Inselbetrieb / Notstrom (Batterie passiv)"
+                }
+              },
+              {
+                "id": "Hardware check",
+                "title": {
+                  "en": "Hardware check",
+                  "de": "Hardwareprüfung"
+                }
+              },
+              {
+                "id": "Feed in",
+                "title": {
+                  "en": "Feed in (Normal Grid Operation)",
+                  "de": "Einspeisen (Normaler Netzbetrieb)"
+                }
+              }
+            ]
+          }
+        ]
+      },
       {
         "id": "battery-level-greater-than",
         "title": {
@@ -2257,6 +2726,75 @@
       "decimals": 0,
       "icon": "/assets/charging.svg"
     },
+    "battery_status": {
+      "type": "enum",
+      "title": {
+        "en": "Battery Status",
+        "de": "Batterie-Status"
+      },
+      "values": [
+        {
+          "id": "normal",
+          "title": {
+            "en": "Normal operation",
+            "de": "Normalbetrieb"
+          }
+        },
+        {
+          "id": "calibrating_charge",
+          "title": {
+            "en": "Calibrating (Charging)",
+            "de": "Kalibrierung (Ladephase)"
+          }
+        },
+        {
+          "id": "calibrating_discharge",
+          "title": {
+            "en": "Calibrating (Discharging)",
+            "de": "Kalibrierung (Entladephase)"
+          }
+        },
+        {
+          "id": "balancing",
+          "title": {
+            "en": "Balancing battery units",
+            "de": "Balancierung der Batteriemodule"
+          }
+        },
+        {
+          "id": "connecting",
+          "title": {
+            "en": "Connecting",
+            "de": "Verbindungsaufbau"
+          }
+        },
+        {
+          "id": "synchronizing",
+          "title": {
+            "en": "Synchronizing",
+            "de": "Synchronisierung"
+          }
+        },
+        {
+          "id": "idle",
+          "title": {
+            "en": "Idle (No CAN connection)",
+            "de": "Inaktiv (Keine CAN-Verbindung)"
+          }
+        },
+        {
+          "id": "other",
+          "title": {
+            "en": "Other / Special mode",
+            "de": "Sonstiger / Sonderbetrieb"
+          }
+        }
+      ],
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/charging.svg"
+    },
     "estimated_savings": {
       "type": "number",
       "title": {
@@ -2279,6 +2817,144 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor"
+    },
+    "grid_status": {
+      "type": "enum",
+      "title": {
+        "en": "Grid Status",
+        "de": "Netzstatus"
+      },
+      "values": [
+        {
+          "id": "connected",
+          "title": {
+            "en": "Grid Connected",
+            "de": "Mit Stromnetz verbunden"
+          }
+        },
+        {
+          "id": "island",
+          "title": {
+            "en": "Island Mode (Power Outage)",
+            "de": "Inselbetrieb (Stromausfall)"
+          }
+        }
+      ],
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/electric-tower.svg"
+    },
+    "inverter_state": {
+      "type": "enum",
+      "title": {
+        "en": "Inverter State",
+        "de": "Wechselrichter-Status"
+      },
+      "values": [
+        {
+          "id": "Standby",
+          "title": {
+            "en": "Standby",
+            "de": "Standby"
+          }
+        },
+        {
+          "id": "Initialization",
+          "title": {
+            "en": "Initialization",
+            "de": "Initialisierung"
+          }
+        },
+        {
+          "id": "Standby2",
+          "title": {
+            "en": "Standby 2",
+            "de": "Standby 2"
+          }
+        },
+        {
+          "id": "Efficiency",
+          "title": {
+            "en": "Efficiency",
+            "de": "Effizienz"
+          }
+        },
+        {
+          "id": "Insulation check",
+          "title": {
+            "en": "Insulation check",
+            "de": "Isolationsprüfung"
+          }
+        },
+        {
+          "id": "Island check",
+          "title": {
+            "en": "Island check",
+            "de": "Inselprüfung"
+          }
+        },
+        {
+          "id": "Power check",
+          "title": {
+            "en": "Power check",
+            "de": "Leistungsprüfung"
+          }
+        },
+        {
+          "id": "Symmetry",
+          "title": {
+            "en": "Symmetry",
+            "de": "Symmetrie"
+          }
+        },
+        {
+          "id": "Relay test",
+          "title": {
+            "en": "Relay test",
+            "de": "Relaistest"
+          }
+        },
+        {
+          "id": "Grid passive",
+          "title": {
+            "en": "Grid passive",
+            "de": "Netz passiv"
+          }
+        },
+        {
+          "id": "Prepare battery passive",
+          "title": {
+            "en": "Prepare battery passive (Island)",
+            "de": "Notstrom vorbereiten (Batterie passiv)"
+          }
+        },
+        {
+          "id": "Battery passive",
+          "title": {
+            "en": "Battery passive (Island / Off-Grid)",
+            "de": "Inselbetrieb / Notstrom (Batterie passiv)"
+          }
+        },
+        {
+          "id": "Hardware check",
+          "title": {
+            "en": "Hardware check",
+            "de": "Hardwareprüfung"
+          }
+        },
+        {
+          "id": "Feed in",
+          "title": {
+            "en": "Feed in (Normal Grid Operation)",
+            "de": "Einspeisen (Normaler Netzbetrieb)"
+          }
+        }
+      ],
+      "uiComponent": "sensor",
+      "getable": true,
+      "setable": false,
+      "icon": "/assets/energy.svg"
     },
     "load_household": {
       "type": "number",

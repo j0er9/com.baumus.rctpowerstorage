@@ -1,7 +1,7 @@
 'use strict';
 
 const RCTDevice = require('../../lib/rct-device');
-const { Identifier, SOCStrategy } = require('../../lib/rctjavalib/datagram');
+const { Identifier, SOCStrategy, BatteryStatus } = require('../../lib/rctjavalib/datagram');
 
 class MyDevice extends RCTDevice {
 
@@ -45,8 +45,17 @@ class MyDevice extends RCTDevice {
     }
 
     // Check if migration is needed for capability
-    if (this.hasCapability('soc_stratgey') === false) {
+    if (this.hasCapability('soc_strategy') === false) {
       await this.addCapability('soc_strategy');
+    }
+    if (this.hasCapability('battery_status') === false) {
+      await this.addCapability('battery_status');
+    }
+    if (this.hasCapability('grid_status') === false) {
+      await this.addCapability('grid_status');
+    }
+    if (this.hasCapability('inverter_state') === false) {
+      await this.addCapability('inverter_state');
     }
 
     // Initialize energy tracking
@@ -56,8 +65,26 @@ class MyDevice extends RCTDevice {
     this._tower1CapacityKWh = 0;
     this._tower2CapacityKWh = 0;
 
+    await this.refreshHardwareSettings();
+  }
+
+  async onSettings({ oldSettings, newSettings, changedKeys }) {
+    await super.onSettings({ oldSettings, newSettings, changedKeys });
+    if (changedKeys.includes('DeviceIP') || changedKeys.includes('DevicePort')) {
+      setTimeout(() => {
+        if (!this.deleted) {
+          this.refreshHardwareSettings().catch((err) => this.error('Failed to refresh hardware settings:', err));
+        }
+      }, 2000);
+    }
+  }
+
+  async refreshHardwareSettings() {
     // Error handling for connection errors
     try {
+      const ok = await this.ensureConnection();
+      if (!ok) return;
+
       // Query tower count and per-tower capacity for accurate system totals
       const towerCount = await this.conn.query(Identifier.BATTERY_SYSTEM_TOWER_COUNT).catch(() => 1);
       this._batteryTowerCount = (typeof towerCount === 'number' && towerCount >= 1) ? towerCount : 1;
@@ -92,9 +119,7 @@ class MyDevice extends RCTDevice {
         : '';
 
       const updateSettings = {
-        // DeviceId: this.getData().id,
-        // DeviceIP: this.getSetting('DeviceIP'),
-        // DevicePort: this.getSetting('DevicePort'),
+        DeviceId: String(this.getData().id || ''),
         battery_capacity: roundedCapacity.toString(),
         battery_tower_count: String(this._batteryTowerCount),
         battery_tower_1_capacity: tower1CapacityRounded,
@@ -116,8 +141,7 @@ class MyDevice extends RCTDevice {
 
       await this.setSettings(updateSettings);
     } catch (error) {
-      this.log('Error during initialization:', error);
-      await this.handleConnectionError(error);
+      this.log('Error during hardware settings refresh:', error);
     }
   }
 
@@ -213,6 +237,35 @@ class MyDevice extends RCTDevice {
       const deviceSOCStrategy = await this.conn.query(Identifier.POWER_MNG_SOC_STRATEGY);
       await this.setCapSOCStrategy(deviceSOCStrategy);
 
+      // Battery System Status (Calibration / Balancing / Normal operation)
+      const rawBatteryStatus = await this.conn.query(Identifier.BATTERY_STATUS).catch(() => null);
+      if (typeof rawBatteryStatus === 'number') {
+        await this.setCapBatteryStatus(rawBatteryStatus);
+      }
+
+      // Inverter State & Grid / Island Detection
+      const inverterState = await this.conn.query(Identifier.INVERTER_STATE).catch(() => null);
+
+      if (inverterState && inverterState !== '#INVALID') {
+        await this.setCapInverterState(inverterState);
+
+        // Only actual passive battery states indicate true off-grid / power outage (island) operation.
+        // Transitional states like "Island check", "Insulation check", or "Relay test" occur briefly
+        // during normal morning/evening inverter transitions and must not trigger a false outage alarm.
+        if (inverterState === 'Battery passive' || inverterState === 'Prepare battery passive') {
+          await this.setCapGridStatus('island', inverterState);
+        } else if (
+          inverterState === 'Feed in'
+          || inverterState === 'Grid passive'
+          || inverterState === 'Standby'
+          || inverterState === 'Standby2'
+        ) {
+          await this.setCapGridStatus('connected', inverterState);
+        } else if (this.getCapabilityValue('grid_status') === null) {
+          await this.setCapGridStatus('connected', inverterState);
+        }
+      }
+
       // Battery mode (using RCT convention for backwards compatibility)
       if (batteryPowerRaw < -15) {
         await this.setCapabilityValue('battery_modus', 'charge');
@@ -247,6 +300,78 @@ class MyDevice extends RCTDevice {
       await this.setUnavailable(`The target device ${this.getStoreValue('address')}:${this.getStoreValue('port')} is unreachable.`);
     } else {
       await this.setUnavailable('Device is currently unavailable due to an error.');
+    }
+  }
+
+  // Map raw BATTERY_STATUS bitmask/code to capability enum id and trigger calibration/status flows
+  async setCapBatteryStatus(rawStatus) {
+    let mappedStatus = 'other';
+    if (rawStatus === 0) {
+      mappedStatus = 'normal';
+    } else if ((rawStatus & 8) === 8 || rawStatus === 8) {
+      mappedStatus = 'calibrating_charge';
+    } else if ((rawStatus & 1024) === 1024 || rawStatus === 1024) {
+      mappedStatus = 'calibrating_discharge';
+    } else if ((rawStatus & 2048) === 2048 || rawStatus === 2048) {
+      mappedStatus = 'balancing';
+    } else if (rawStatus === 3) {
+      mappedStatus = 'connecting';
+    } else if (rawStatus === 5) {
+      mappedStatus = 'synchronizing';
+    } else if (rawStatus === 1) {
+      mappedStatus = 'idle';
+    }
+
+    const previousValue = this.getCapabilityValue('battery_status');
+    if (previousValue !== mappedStatus) {
+      await this.setCapabilityValue('battery_status', mappedStatus);
+
+      if (previousValue !== null && previousValue !== undefined) {
+        const statusDescription = BatteryStatus.decode(rawStatus);
+        const tokens = { battery_status: String(statusDescription) };
+        const state = {};
+
+        this.homey.flow.getDeviceTriggerCard('battery_status_changed').trigger(this, tokens, state).catch(this.error);
+
+        const wasCalibrating = previousValue === 'calibrating_charge' || previousValue === 'calibrating_discharge' || previousValue === 'balancing';
+        const isCalibrating = mappedStatus === 'calibrating_charge' || mappedStatus === 'calibrating_discharge' || mappedStatus === 'balancing';
+
+        if (!wasCalibrating && isCalibrating) {
+          this.homey.flow.getDeviceTriggerCard('battery_calibration_started').trigger(this, tokens, state).catch(this.error);
+        } else if (wasCalibrating && !isCalibrating) {
+          this.homey.flow.getDeviceTriggerCard('battery_calibration_ended').trigger(this, tokens, state).catch(this.error);
+        }
+      }
+    }
+  }
+
+  // Check if inverter_state has changed and trigger the flow card "Inverter State Changed"
+  async setCapInverterState(value) {
+    const previousValue = this.getCapabilityValue('inverter_state');
+    if (previousValue !== value) {
+      await this.setCapabilityValue('inverter_state', value);
+      if (previousValue !== null && previousValue !== undefined) {
+        const tokens = { inverter_state: String(value) };
+        const state = {};
+        this.homey.flow.getDeviceTriggerCard('inverter_state_changed').trigger(this, tokens, state).catch(this.error);
+      }
+    }
+  }
+
+  // Check if grid_status has changed and trigger grid_disconnected / grid_reconnected flow cards
+  async setCapGridStatus(value, inverterStateStr = '') {
+    const previousValue = this.getCapabilityValue('grid_status');
+    if (previousValue !== value) {
+      await this.setCapabilityValue('grid_status', value);
+      if (previousValue !== null && previousValue !== undefined) {
+        const tokens = { inverter_state: String(inverterStateStr || this.getCapabilityValue('inverter_state') || '') };
+        const state = {};
+        if (value === 'island') {
+          this.homey.flow.getDeviceTriggerCard('grid_disconnected').trigger(this, tokens, state).catch(this.error);
+        } else if (value === 'connected') {
+          this.homey.flow.getDeviceTriggerCard('grid_reconnected').trigger(this, tokens, state).catch(this.error);
+        }
+      }
     }
   }
 

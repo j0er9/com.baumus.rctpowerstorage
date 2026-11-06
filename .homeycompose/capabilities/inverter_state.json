@@ -1,0 +1,111 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Inverter State",
+    "de": "Wechselrichter-Status"
+  },
+  "values": [
+    {
+      "id": "Standby",
+      "title": {
+        "en": "Standby",
+        "de": "Standby"
+      }
+    },
+    {
+      "id": "Initialization",
+      "title": {
+        "en": "Initialization",
+        "de": "Initialisierung"
+      }
+    },
+    {
+      "id": "Standby2",
+      "title": {
+        "en": "Standby 2",
+        "de": "Standby 2"
+      }
+    },
+    {
+      "id": "Efficiency",
+      "title": {
+        "en": "Efficiency",
+        "de": "Effizienz"
+      }
+    },
+    {
+      "id": "Insulation check",
+      "title": {
+        "en": "Insulation check",
+        "de": "Isolationsprüfung"
+      }
+    },
+    {
+      "id": "Island check",
+      "title": {
+        "en": "Island check",
+        "de": "Inselprüfung"
+      }
+    },
+    {
+      "id": "Power check",
+      "title": {
+        "en": "Power check",
+        "de": "Leistungsprüfung"
+      }
+    },
+    {
+      "id": "Symmetry",
+      "title": {
+        "en": "Symmetry",
+        "de": "Symmetrie"
+      }
+    },
+    {
+      "id": "Relay test",
+      "title": {
+        "en": "Relay test",
+        "de": "Relaistest"
+      }
+    },
+    {
+      "id": "Grid passive",
+      "title": {
+        "en": "Grid passive",
+        "de": "Netz passiv"
+      }
+    },
+    {
+      "id": "Prepare battery passive",
+      "title": {
+        "en": "Prepare battery passive (Island)",
+        "de": "Notstrom vorbereiten (Batterie passiv)"
+      }
+    },
+    {
+      "id": "Battery passive",
+      "title": {
+        "en": "Battery passive (Island / Off-Grid)",
+        "de": "Inselbetrieb / Notstrom (Batterie passiv)"
+      }
+    },
+    {
+      "id": "Hardware check",
+      "title": {
+        "en": "Hardware check",
+        "de": "Hardwareprüfung"
+      }
+    },
+    {
+      "id": "Feed in",
+      "title": {
+        "en": "Feed in (Normal Grid Operation)",
+        "de": "Einspeisen (Normaler Netzbetrieb)"
+      }
+    }
+  ],
+  "uiComponent": "sensor",
+  "getable": true,
+  "setable": false,
+  "icon": "/assets/energy.svg"
+}

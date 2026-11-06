@@ -50,6 +50,31 @@ class MyDriver extends RCTDriver {
         return args.device.getCapabilityValue('soc_strategy') === args.soc_strategy;
       });
 
+    // Register the is_grid_connected condition card
+    this.homey.flow.getConditionCard('is_grid_connected')
+      .registerRunListener((args, state) => {
+        return args.device.getCapabilityValue('grid_status') === 'connected';
+      });
+
+    // Register the inverter_state_is condition card
+    this.homey.flow.getConditionCard('inverter_state_is')
+      .registerRunListener((args, state) => {
+        return args.device.getCapabilityValue('inverter_state') === args.inverter_state;
+      });
+
+    // Register the is_battery_calibrating condition card
+    this.homey.flow.getConditionCard('is_battery_calibrating')
+      .registerRunListener((args, state) => {
+        const status = args.device.getCapabilityValue('battery_status');
+        return status === 'calibrating_charge' || status === 'calibrating_discharge' || status === 'balancing';
+      });
+
+    // Register the battery_status_is condition card
+    this.homey.flow.getConditionCard('battery_status_is')
+      .registerRunListener((args, state) => {
+        return args.device.getCapabilityValue('battery_status') === args.battery_status;
+      });
+
     // Regsiter the disable_battery_discharge action card
     this.homey.flow.getActionCard('disable_battery_discharge')
       .registerRunListener(async (args) => {

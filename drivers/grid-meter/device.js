@@ -31,6 +31,7 @@ module.exports = class MyDevice extends RCTDevice {
 
   async onSettings({ oldSettings, newSettings, changedKeys }) {
     this.log('Grid Meter Device settings where changed');
+    await super.onSettings({ oldSettings, newSettings, changedKeys });
   }
 
   async onRenamed(name) {

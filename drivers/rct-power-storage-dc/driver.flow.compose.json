@@ -196,9 +196,299 @@
           }
         }
       ]
+    },
+    {
+      "id": "grid_disconnected",
+      "highlight": true,
+      "title": {
+        "en": "Power outage / Island mode started (Disconnected from grid)",
+        "de": "Stromausfall / Inselbetrieb gestartet (Vom Stromnetz getrennt)"
+      },
+      "titleFormatted": {
+        "en": "Power outage / Island mode started (Disconnected from grid)",
+        "de": "Stromausfall / Inselbetrieb gestartet (Vom Stromnetz getrennt)"
+      },
+      "tokens": [
+        {
+          "name": "inverter_state",
+          "type": "string",
+          "title": {
+            "en": "Inverter State",
+            "de": "Wechselrichter-Status"
+          },
+          "example": "Battery passive"
+        }
+      ]
+    },
+    {
+      "id": "grid_reconnected",
+      "title": {
+        "en": "Grid connection restored (Island mode ended)",
+        "de": "Netzverbindung wiederhergestellt (Inselbetrieb beendet)"
+      },
+      "titleFormatted": {
+        "en": "Grid connection restored (Island mode ended)",
+        "de": "Netzverbindung wiederhergestellt (Inselbetrieb beendet)"
+      },
+      "tokens": [
+        {
+          "name": "inverter_state",
+          "type": "string",
+          "title": {
+            "en": "Inverter State",
+            "de": "Wechselrichter-Status"
+          },
+          "example": "Feed in"
+        }
+      ]
+    },
+    {
+      "id": "inverter_state_changed",
+      "title": {
+        "en": "Inverter State Changed",
+        "de": "Wechselrichter-Status hat sich geändert"
+      },
+      "titleFormatted": {
+        "en": "Inverter State Changed",
+        "de": "Wechselrichter-Status hat sich geändert"
+      },
+      "tokens": [
+        {
+          "name": "inverter_state",
+          "type": "string",
+          "title": {
+            "en": "Inverter State",
+            "de": "Wechselrichter-Status"
+          },
+          "example": "Feed in"
+        }
+      ]
+    },
+    {
+      "id": "battery_calibration_started",
+      "highlight": true,
+      "title": {
+        "en": "Battery calibration started",
+        "de": "Batterie-Kalibrierung gestartet"
+      },
+      "titleFormatted": {
+        "en": "Battery calibration started",
+        "de": "Batterie-Kalibrierung gestartet"
+      },
+      "tokens": [
+        {
+          "name": "battery_status",
+          "type": "string",
+          "title": {
+            "en": "Battery Status",
+            "de": "Batterie-Status"
+          },
+          "example": "Calibrating - charging phase"
+        }
+      ]
+    },
+    {
+      "id": "battery_calibration_ended",
+      "title": {
+        "en": "Battery calibration ended",
+        "de": "Batterie-Kalibrierung beendet"
+      },
+      "titleFormatted": {
+        "en": "Battery calibration ended",
+        "de": "Batterie-Kalibrierung beendet"
+      },
+      "tokens": [
+        {
+          "name": "battery_status",
+          "type": "string",
+          "title": {
+            "en": "Battery Status",
+            "de": "Batterie-Status"
+          },
+          "example": "Normal operation (charge/discharge)"
+        }
+      ]
+    },
+    {
+      "id": "battery_status_changed",
+      "title": {
+        "en": "Battery Status Changed",
+        "de": "Batterie-Status hat sich geändert"
+      },
+      "titleFormatted": {
+        "en": "Battery Status Changed",
+        "de": "Batterie-Status hat sich geändert"
+      },
+      "tokens": [
+        {
+          "name": "battery_status",
+          "type": "string",
+          "title": {
+            "en": "Battery Status",
+            "de": "Batterie-Status"
+          },
+          "example": "Normal operation (charge/discharge)"
+        }
+      ]
     }
   ],
   "conditions": [
+    {
+      "id": "is_battery_calibrating",
+      "title": {
+        "en": "Battery !{{is|is not}} in calibration mode",
+        "de": "Batterie !{{ist|ist nicht}} im Kalibrierungsmodus"
+      },
+      "titleFormatted": {
+        "en": "Battery !{{is|is not}} in calibration mode",
+        "de": "Batterie !{{ist|ist nicht}} im Kalibrierungsmodus"
+      }
+    },
+    {
+      "id": "battery_status_is",
+      "title": {
+        "en": "Battery Status !{{is|is not}}",
+        "de": "Batterie-Status !{{ist|ist nicht}}"
+      },
+      "titleFormatted": {
+        "en": "Battery Status !{{is|is not}} [[battery_status]]",
+        "de": "Batterie-Status !{{ist|ist nicht}} [[battery_status]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "battery_status",
+          "title": {
+            "en": "Battery Status",
+            "de": "Batterie-Status"
+          },
+          "values": [
+            {
+              "id": "normal",
+              "title": { "en": "Normal operation", "de": "Normalbetrieb" }
+            },
+            {
+              "id": "calibrating_charge",
+              "title": { "en": "Calibrating (Charging)", "de": "Kalibrierung (Ladephase)" }
+            },
+            {
+              "id": "calibrating_discharge",
+              "title": { "en": "Calibrating (Discharging)", "de": "Kalibrierung (Entladephase)" }
+            },
+            {
+              "id": "balancing",
+              "title": { "en": "Balancing battery units", "de": "Balancierung der Batteriemodule" }
+            },
+            {
+              "id": "connecting",
+              "title": { "en": "Connecting", "de": "Verbindungsaufbau" }
+            },
+            {
+              "id": "synchronizing",
+              "title": { "en": "Synchronizing", "de": "Synchronisierung" }
+            },
+            {
+              "id": "idle",
+              "title": { "en": "Idle (No CAN connection)", "de": "Inaktiv (Keine CAN-Verbindung)" }
+            },
+            {
+              "id": "other",
+              "title": { "en": "Other / Special mode", "de": "Sonstiger / Sonderbetrieb" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "is_grid_connected",
+      "title": {
+        "en": "!{{Is|Is not}} connected to the public grid (Not in island mode)",
+        "de": "!{{Ist|Ist nicht}} mit dem öffentlichen Stromnetz verbunden (Kein Inselbetrieb)"
+      },
+      "titleFormatted": {
+        "en": "!{{Is|Is not}} connected to the public grid (Not in island mode)",
+        "de": "!{{Ist|Ist nicht}} mit dem öffentlichen Stromnetz verbunden (Kein Inselbetrieb)"
+      }
+    },
+    {
+      "id": "inverter_state_is",
+      "title": {
+        "en": "Inverter State !{{is|is not}}",
+        "de": "Wechselrichter-Status !{{ist|ist nicht}}"
+      },
+      "titleFormatted": {
+        "en": "Inverter State !{{is|is not}} [[inverter_state]]",
+        "de": "Wechselrichter-Status !{{ist|ist nicht}} [[inverter_state]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "inverter_state",
+          "title": {
+            "en": "Inverter State",
+            "de": "Wechselrichter-Status"
+          },
+          "values": [
+            {
+              "id": "Standby",
+              "title": { "en": "Standby", "de": "Standby" }
+            },
+            {
+              "id": "Initialization",
+              "title": { "en": "Initialization", "de": "Initialisierung" }
+            },
+            {
+              "id": "Standby2",
+              "title": { "en": "Standby 2", "de": "Standby 2" }
+            },
+            {
+              "id": "Efficiency",
+              "title": { "en": "Efficiency", "de": "Effizienz" }
+            },
+            {
+              "id": "Insulation check",
+              "title": { "en": "Insulation check", "de": "Isolationsprüfung" }
+            },
+            {
+              "id": "Island check",
+              "title": { "en": "Island check", "de": "Inselprüfung" }
+            },
+            {
+              "id": "Power check",
+              "title": { "en": "Power check", "de": "Leistungsprüfung" }
+            },
+            {
+              "id": "Symmetry",
+              "title": { "en": "Symmetry", "de": "Symmetrie" }
+            },
+            {
+              "id": "Relay test",
+              "title": { "en": "Relay test", "de": "Relaistest" }
+            },
+            {
+              "id": "Grid passive",
+              "title": { "en": "Grid passive", "de": "Netz passiv" }
+            },
+            {
+              "id": "Prepare battery passive",
+              "title": { "en": "Prepare battery passive (Island)", "de": "Notstrom vorbereiten (Batterie passiv)" }
+            },
+            {
+              "id": "Battery passive",
+              "title": { "en": "Battery passive (Island / Off-Grid)", "de": "Inselbetrieb / Notstrom (Batterie passiv)" }
+            },
+            {
+              "id": "Hardware check",
+              "title": { "en": "Hardware check", "de": "Hardwareprüfung" }
+            },
+            {
+              "id": "Feed in",
+              "title": { "en": "Feed in (Normal Grid Operation)", "de": "Einspeisen (Normaler Netzbetrieb)" }
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "battery-level-greater-than",
       "title": {

@@ -187,5 +187,9 @@
   },
   "4.5.0": {
     "en": "feat: Add battery tower count and capacity labels to device and driver configuration"
+  },
+  "4.6.0": {
+    "en": "feat: Add editable IP/port settings, power outage (island mode) detection, and battery calibration status & flow cards",
+    "de": "feat: Editierbare IP/Port-Einstellungen, Stromausfall-/Inselbetrieb-Erkennung sowie Batterie-Kalibrierungsstatus & Flow-Karten hinzugefügt"
   }
 }

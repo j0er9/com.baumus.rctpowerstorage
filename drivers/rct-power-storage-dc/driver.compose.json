@@ -11,6 +11,9 @@
     "battery_power",
     "battery_modus",
     "soc_strategy",
+    "battery_status",
+    "grid_status",
+    "inverter_state",
     "solar_power",
     "total_grid_power",
     "load_household"
@@ -208,18 +211,22 @@
         },
         {
           "id": "DeviceIP",
-          "type": "label",
+          "type": "text",
           "value": "",
           "label": {
-            "en": "IP Address"
+            "en": "IP Address",
+            "de": "IP-Adresse"
           }
         },
         {
           "id": "DevicePort",
-          "type": "label",
-          "value": "",
+          "type": "number",
+          "value": 8899,
+          "min": 1,
+          "max": 65535,
           "label": {
-            "en": "Port"
+            "en": "Port",
+            "de": "Port"
           }
         },
         {

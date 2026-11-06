@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0] - 2026-11-06
+
+### Added
+
+- **Editable IP Address and Port in Device Settings** (`RCT Power Storage DC`, `Solar Panel`, `Grid Meter`)
+  - `DeviceIP` and `DevicePort` can now be updated directly in the Homey device settings without re-pairing the device, preserving all Flows and historical Insights data.
+  - Automatically updates the internal device store and reconnects when changed.
+- **Power Outage / Island Mode Detection & Inverter State Monitoring** (`RCT Power Storage DC`)
+  - New capability `grid_status` (*Mit Stromnetz verbunden* / *Inselbetrieb (Stromausfall)*).
+  - New capability `inverter_state` showing the live RCT inverter state (e.g., *Feed in*, *Battery passive*, *Island check*, *Standby*).
+  - Flow Triggers (WHEN):
+    - `grid_disconnected`: *Stromausfall / Inselbetrieb gestartet (Vom Stromnetz getrennt)*
+    - `grid_reconnected`: *Netzverbindung wiederhergestellt (Inselbetrieb beendet)*
+    - `inverter_state_changed`: *Wechselrichter-Status hat sich geändert*
+  - Flow Conditions (AND):
+    - `is_grid_connected`: *Ist / Ist nicht mit dem öffentlichen Stromnetz verbunden (Kein Inselbetrieb)*
+    - `inverter_state_is`: *Wechselrichter-Status ist / ist nicht [...]*
+- **Battery Calibration & Status Detection** (`RCT Power Storage DC`)
+  - New capability `battery_status` tracking the RCT battery status (`Normalbetrieb`, `Kalibrierung (Ladephase)`, `Kalibrierung (Entladephase)`, `Balancierung der Batteriemodule`, etc.).
+  - Flow Triggers (WHEN):
+    - `battery_calibration_started`: *Batterie-Kalibrierung gestartet*
+    - `battery_calibration_ended`: *Batterie-Kalibrierung beendet*
+    - `battery_status_changed`: *Batterie-Status hat sich geändert*
+  - Flow Conditions (AND):
+    - `is_battery_calibrating`: *Batterie ist / ist nicht im Kalibrierungsmodus* (Yes/No condition for Advanced Flows covering charging, balancing, and discharging calibration phases)
+    - `battery_status_is`: *Batterie-Status ist / ist nicht [...]*
+
+### Fixed
+
+- **False Island Mode Triggers during Inverter Transitions** - Ignore brief transitional states (`Island check`, `Insulation check`, `Relay test`) when determining `grid_status` so normal morning/evening inverter transitions do not trigger false power outage events.
+- **Polling Overlap Prevention** - Added an update lock (`_isUpdating`) in `RCTDevice` to prevent overlapping polling cycles.
+- **Settings Save Race Condition** - Deferred hardware settings refresh and polling restart after `onSettings` completes to avoid `Cannot set Settings while this.onSettings is still pending` errors.
+
 ## [3.0.0] - 2025-11-25
 
 ### ⚠️ BREAKING CHANGES

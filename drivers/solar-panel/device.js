@@ -43,6 +43,7 @@ module.exports = class MyDevice extends RCTDevice {
    */
   async onSettings({ oldSettings, newSettings, changedKeys }) {
     this.log('MyDevice settings where changed');
+    await super.onSettings({ oldSettings, newSettings, changedKeys });
   }
 
   /**
